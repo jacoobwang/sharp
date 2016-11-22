@@ -23,12 +23,13 @@
 					for($i=0;$i<$tmp_length;$i++){
 						if($i == $tmp_length-1){
 							$dst_name .= 'thumb.'.$tmp[$i];	
+							$extension = $tmp[$i];
 						}else{
 							$dst_name .= $tmp[$i].'.';
 						}
 					}
 
-					if(in_array( $tmp[1], array('jpg','png','gif') )){
+					if(in_array( $extension, array('jpg','png','gif') ) && !preg_match('/.thumb.(jpg|png|gif)/i', $file)){
 						create_thumb( $dir.DIRECTORY_SEPARATOR.$file, $dst_name );
 					}
 				}
