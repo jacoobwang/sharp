@@ -30,7 +30,7 @@
 					}
 
 					if(in_array( $extension, array('jpg','png','gif') ) && !preg_match('/.thumb.(jpg|png|gif)/i', $file)){
-						create_thumb( $dir.DIRECTORY_SEPARATOR.$file, $dst_name );
+						create_thumb( $dir.DIRECTORY_SEPARATOR.$file, $dst_name);
 					}
 				}
 			} 
@@ -45,7 +45,7 @@
 	 * @width    新文件宽度
 	 * @height   新文件高度
 	**/
-	function create_thumb($src_name,$dst_name,$width,$height){
+	function create_thumb($src_name,$dst_name,$width=250,$height=250){
 		// 打开文件
 		$src_img = open_image($src_name);
 		// 计算新尺寸
