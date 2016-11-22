@@ -39,6 +39,10 @@
 	
 	/**
 	 * 按比例生成缩略图
+	 * @src_name 文件路径
+	 * @dst_name 新文件的路径
+	 * @width    新文件宽度
+	 * @height   新文件高度
 	**/
 	function create_thumb($src_name,$dst_name,$width,$height){
 		// 打开文件
