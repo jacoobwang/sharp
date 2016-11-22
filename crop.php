@@ -3,7 +3,7 @@
 *	@Author Jacoob
 *   @Time 2016-11-22
 *   @Desc 对图片进行两次裁剪，第一次按比例缩放，第二次在缩放的基础上截取从头部开始固定宽高的图片生成缩列图
-*    基于php-GD库
+*   基于php-GD库，遍历目录下的文件，自动识别过滤图片文件并处理
 **/
 	error_reporting(0);
 	ini_set('memory_limit','500M');
@@ -16,8 +16,17 @@
 		if ($dh = opendir($dir)) {
 			while (($file = readdir($dh)) !== false) {
 				if($file != '.' && $file != '..' ){
+					// 生成缩略图名字	
 					$tmp = explode('.', $file);
-					$dst_name = $dir.DIRECTORY_SEPARATOR.$tmp[0].'.thumb.'.$tmp[1];
+					$dst_name = $dir.DIRECTORY_SEPARATOR;
+					$tmp_length = count($tmp);
+					for($i=0;$i<$tmp_length;$i++){
+						if($i == $tmp_length-1){
+							$dst_name .= 'thumb.'.$tmp[$i];	
+						}else{
+							$dst_name .= $tmp[$i].'.';
+						}
+					}
 
 					if(in_array( $tmp[1], array('jpg','png','gif') )){
 						create_thumb( $dir.DIRECTORY_SEPARATOR.$file, $dst_name );
@@ -31,7 +40,7 @@
 	/**
 	 * 按比例生成缩略图
 	**/
-	function create_thumb($src_name,$dst_name){
+	function create_thumb($src_name,$dst_name,$width,$height){
 		// 打开文件
 		$src_img = open_image($src_name);
 		// 计算新尺寸
@@ -40,7 +49,7 @@
 		$old_x=imageSX($src_img);
 		$old_y=imageSY($src_img);
 
-		$new_w = 250;
+		$new_w = $width;
 		$new_h = ceil($new_w * ($old_y/$old_x));
 		// 创建画板
 		$dst_img=imagecreatetruecolor($new_w,$new_h);
@@ -49,12 +58,12 @@
 		imagecopyresampled($dst_img,$src_img,0,0,0,0,$new_w,$new_h,$old_x,$old_y);
 		imagefilter($dst_img,IMG_FILTER_SMOOTH,-27.9);	
 
-		if($new_h < 250){
-			$new_dst_img=imagecreatetruecolor(250,$new_h);
-			imagecopyresampled($new_dst_img,$dst_img,0,0,0,0,250,$new_h,250,$new_h);
+		if($new_h < $height){
+			$new_dst_img=imagecreatetruecolor($new_w,$new_h);
+			imagecopyresampled($new_dst_img,$dst_img,0,0,0,0,$new_w,$new_h,$new_w,$new_h);
 		}else{
-			$new_dst_img=imagecreatetruecolor(250,250);
-			imagecopyresampled($new_dst_img,$dst_img,0,0,0,0,250,250,250,250);
+			$new_dst_img=imagecreatetruecolor($width,$height);
+			imagecopyresampled($new_dst_img,$dst_img,0,0,0,0,$width,$height,$width,$height);
 		}
 		// 保存缩略图为图片
 		imagejpeg($new_dst_img,$dst_name);
